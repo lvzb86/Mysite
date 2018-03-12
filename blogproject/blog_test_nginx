@@ -1,0 +1,37 @@
+upstream django {
+    server 127.0.0.1:8186; # 服务器的IP和端口
+}
+
+server {
+	# 监听 就是你启动的端口
+    listen         80;
+	# server_name后面跟你的公网ip，域名。
+    server_name 47.93.3.190 lvzb86.xin www.lvzb86.xin;
+    charset UTF-8;
+
+	# 日志文件位置
+    access_log      /home/Mysite/blogproject/log/test_access.log;
+    error_log       /home/Mysite/blogproject/log/test_error.log;
+
+	# 上传文件大小限制
+    client_max_body_size 16M;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass django;
+        uwsgi_read_timeout 2;
+		uwsgi_connect_timeout 30;
+    }
+    location /static {
+        expires 30d;
+        autoindex on;
+        add_header Cache-Control private;
+        alias /home/Mysite/blogproject/static;
+     }
+	 location /media  {
+		alias  /home/Mysite/blogproject/media;
+	}
+    location /favicon.ico {
+    alias /home/Mysite/blogproject/static;
+}
+ }
